@@ -3,34 +3,6 @@ provider "datadog" {
   app_key = "${var.datadog_app_key}"
 }
 
-variable "datadog_api_key" {}
-variable "datadog_app_key" {}
-
-# Footer added to each monitor alert.
-variable "datadog_alert_footer" {
-  default = <<EOF
-{{#is_no_data}}Not receiving data{{/is_no_data}}
-{{#is_alert}}@pagerduty{{/is_alert}}
-{{#is_recovery}}@pagerduty-resolve{{/is_recovery}}
-@slack-alerts
-EOF
-}
-
-# Trigger a separate alert for each host and env.
-variable "trigger_by" {
-  default = "{host,env}"
-}
-
-# Variable defining the query and threshold shared by a monitor and graph for the disk usage.
-variable "disk_usage" {
-  type = "map"
-
-  default = {
-    query     = "max:system.disk.in_use"
-    threshold = "85"
-  }
-}
-
 # Monitor for the the disk usage.
 resource "datadog_monitor" "disk_usage" {
   name           = "Disk usage high"
@@ -44,16 +16,6 @@ Disk usage high: {{value}}
 
 ${var.datadog_alert_footer}
 EOM
-}
-
-# Variable defining the query and threshold shared by a monitor and graph for the CPU usage.
-variable "cpu_usage" {
-  type = "map"
-
-  default = {
-    query     = "avg:aws.ec2.cpuutilization"
-    threshold = "85"
-  }
 }
 
 # Monitor for the the CPU usage.
@@ -111,3 +73,42 @@ resource "datadog_timeboard" "host_metrics" {
     }
   }
 }
+
+# Footer added to each monitor alert.
+variable "datadog_alert_footer" {
+  default = <<EOF
+{{#is_no_data}}Not receiving data{{/is_no_data}}
+{{#is_alert}}@pagerduty{{/is_alert}}
+{{#is_recovery}}@pagerduty-resolve{{/is_recovery}}
+@slack-alerts
+EOF
+}
+
+# Trigger a separate alert for each host and env.
+variable "trigger_by" {
+  default = "{host,env}"
+}
+
+# Variable defining the query and threshold shared by a monitor and graph for the disk usage.
+variable "disk_usage" {
+  type = "map"
+
+  default = {
+    query     = "max:system.disk.in_use"
+    threshold = "85"
+  }
+}
+
+# Variable defining the query and threshold shared by a monitor and graph for the CPU usage.
+variable "cpu_usage" {
+  type = "map"
+
+  default = {
+    query     = "avg:aws.ec2.cpuutilization"
+    threshold = "85"
+  }
+}
+
+
+variable "datadog_api_key" {}
+variable "datadog_app_key" {}

@@ -74,21 +74,6 @@ resource "datadog_timeboard" "host_metrics" {
   }
 }
 
-# Footer added to each monitor alert.
-variable "datadog_alert_footer" {
-  default = <<EOF
-{{#is_no_data}}Not receiving data{{/is_no_data}}
-{{#is_alert}}@pagerduty{{/is_alert}}
-{{#is_recovery}}@pagerduty-resolve{{/is_recovery}}
-@slack-alerts
-EOF
-}
-
-# Trigger a separate alert for each host and env.
-variable "trigger_by" {
-  default = "{host,env}"
-}
-
 # Variable defining the query and threshold shared by a monitor and graph for the disk usage.
 variable "disk_usage" {
   type = "map"
@@ -109,6 +94,20 @@ variable "cpu_usage" {
   }
 }
 
+# Footer added to each monitor alert.
+variable "datadog_alert_footer" {
+  default = <<EOF
+{{#is_no_data}}Not receiving data{{/is_no_data}}
+{{#is_alert}}@pagerduty{{/is_alert}}
+{{#is_recovery}}@pagerduty-resolve{{/is_recovery}}
+@slack-alerts
+EOF
+}
+
+# Trigger a separate alert for each host and env.
+variable "trigger_by" {
+  default = "{host,env}"
+}
 
 variable "datadog_api_key" {}
 variable "datadog_app_key" {}
